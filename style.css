@@ -1,3 +1,8 @@
+h1{
+  color: yellow;
+  font-size:  40px;
+}
+
 #game div {
   border: 1px solid black;
   width: 15%;
