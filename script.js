@@ -97,7 +97,10 @@ function handleCardClick(event) {
   //each pair selected adds to the score.
   if (selected.length < 2) {
     selected.push(card);
+    card.removeEventListener("click", handleCardClick);
     card.style.backgroundColor = card.classList[1];
+
+
 
     if (selected.length === 2) {
       score++;
@@ -106,7 +109,7 @@ function handleCardClick(event) {
       if (selected[0].style.backgroundColor === selected[1].style.backgroundColor) {
         //fanfare
         console.log("You made a match!  HELLS YEAH!!!");
-        selected[0].removeEventListener("click", handleCardClick);
+        //selected[0].removeEventListener("click", handleCardClick); //already removed
         selected[1].removeEventListener("click", handleCardClick);
         selected.splice(0, selected.length);
         matches++;
@@ -116,6 +119,8 @@ function handleCardClick(event) {
       }
 
       else setTimeout(() => {
+        selected[0].addEventListener("click", handleCardClick);
+        selected[1].addEventListener("click", handleCardClick);
         selected[0].style.backgroundColor = "white";
         selected[1].style.backgroundColor = "white";
         selected.splice(0, selected.length);
