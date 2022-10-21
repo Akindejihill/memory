@@ -1,8 +1,8 @@
 //initialize variables for html elements
-let gameContainer = null;
-let scoreDisplay = null;
-let bScoreDisplay = null;
-let playAgain = null;
+let gameContainer = null;  //the div containing the game
+let scoreDisplay = null;   //the div displaying the score
+let bScoreDisplay = null;  //the div displaying the best score
+let playAgain = null;      //the play again button
 
 const COLORS = [
   "red",
@@ -17,11 +17,10 @@ const COLORS = [
   "purple"
 ];
 
-//how many cards the user has turned over
-let selected = [];
-let score = 0;
-let bestScore = 0;
-let matches = 0;
+let selected = []; //contains no more tha two cards that have been selected.
+let score = 0;     //score increases every match attempt
+let bestScore = 0; 
+let matches = 0;   //keeps track of successful matches
 
 
 // here is a helper function to shuffle an array
@@ -70,26 +69,29 @@ function createDivsForColors(colorArray) {
   }
 }
 
+
+//gameOver gets called after all matches have been discovered
+//It celebrates and displays the play again button
 function gameOver() {
   //Celebrate all matches being made
   console.log("OMFG, You matched them all!");
   playAgain.style.display = "block";
 
+  //store and record a new best score if needed
   if (bestScore === 0 || score < bestScore) {
     bestScore = score;
     localStorage.setItem("bestScore", bestScore);
 
     console.log("YAY, A NEW BEST SCORE!");
-    //Notify user that they got the highscore
-    //fanfare
+    //TODO: Notify user that they got the highscore
+    //TODO: fanfare
   }
 
 }
 
 
-//TODO: Implement this function!
+//event handler for card clicks
 function handleCardClick(event) {
-  // you can use event.target to see which element was clicked
   console.log("you just clicked", event.target);
   let card = event.target;
 
@@ -101,56 +103,61 @@ function handleCardClick(event) {
     card.style.backgroundColor = card.classList[1];
 
 
-
+    //if two cards have been selected...
     if (selected.length === 2) {
       score++;
       scoreDisplay.innerText = score;
 
+      //if the two cards match
       if (selected[0].style.backgroundColor === selected[1].style.backgroundColor) {
-        //fanfare
+        //fanfare 
         console.log("You made a match!  HELLS YEAH!!!");
         //selected[0].removeEventListener("click", handleCardClick); //already removed
         selected[1].removeEventListener("click", handleCardClick);
         selected.splice(0, selected.length);
         matches++;
+
+        //if all matches have been discovered
         if (matches === 5) {
           gameOver();
         }
       }
 
+      //if the cards don't match
       else setTimeout(() => {
-        selected[0].addEventListener("click", handleCardClick);
+        selected[0].addEventListener("click", handleCardClick);  //put the event listeners back
         selected[1].addEventListener("click", handleCardClick);
-        selected[0].style.backgroundColor = "white";
+        selected[0].style.backgroundColor = "white";             //flip the cards back around
         selected[1].style.backgroundColor = "white";
-        selected.splice(0, selected.length);
+        selected.splice(0, selected.length);                     //clear the "selected" array
       }, 1000);
     }
-    //store a timer in the card object, inside of the selected array
+    
 
   }
 
 }
+
+//setup a new game
 function newGame() {
 
-  playAgain.style.display = "none";
-  score = 0;
+  playAgain.style.display = "none";       //hide the play again button
+  score = 0;                              //reset score and match counts
   matches = 0;
   bScoreDisplay.innerText = bestScore;
   scoreDisplay.innerText = score;
 
   //erase old deck
   let deck = document.getElementsByClassName("card");
-  console.log(deck.length);
-  for (let i = deck.length - 1; i >= 0; i--) {
-    console.log("removing ", deck[i].classList);
-    deck[i].remove();
-  }
+  while(deck.length > 0){deck[0].remove()};
 
   shuffledColors = shuffle(COLORS);
   createDivsForColors(shuffledColors)
 }
 
+//after the DOM contents load store
+//the elements we need in varables and
+//set our first listeners
 function initializeGame() {
   gameContainer = document.getElementById("game");
   scoreDisplay = document.getElementById("scorevalue");
@@ -158,6 +165,8 @@ function initializeGame() {
   playAgain = document.getElementById("playagain");
 
   playAgain.addEventListener("click", newGame);
+
+  //animate the mouse down and mouse up. 
   playAgain.addEventListener("mousedown", (e) => { e.target.classList.add("press") });
   playAgain.addEventListener("mouseup", (e) => { e.target.classList.remove("press") });
 
@@ -169,8 +178,6 @@ function initializeGame() {
 
   newGame();
 }
-
-
 
 // when the DOM loads
 document.addEventListener("DOMContentLoaded", initializeGame);
